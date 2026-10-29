@@ -1,0 +1,12 @@
+{
+  "name": "etsy-poster-studio",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "scripts": {
+    "start": "node server.mjs",
+    "start:render": "node start-render.mjs"
+  }
+}

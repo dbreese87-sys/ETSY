@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: etsy-poster-studio
+    runtime: node
+    plan: 0.5c-512mb
+    buildCommand: npm install
+    startCommand: npm run start:render
+    healthCheckPath: /
+    autoDeployTrigger: commit
+    disk:
+      name: poster-studio-media
+      mountPath: /opt/render/project/src/media
+      sizeGB: 1
+    envVars:
+      - key: NODE_VERSION
+        value: 24.22.1
+      - key: ALURA_API_KEY
+        sync: false
+      - key: APP_PASSWORD
+        sync: false
+      - key: APP_SESSION_SECRET
+        generateValue: true
