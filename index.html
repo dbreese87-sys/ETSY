@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Shop Studio · Etsy workspace preview</title>
+  <style>
+    :root {
+      --ink: #25312b;
+      --muted: #778078;
+      --line: #e7e9e3;
+      --paper: #fffefa;
+      --wash: #f5f6f0;
+      --green: #315b49;
+      --green-dark: #244635;
+      --green-soft: #e9f0e9;
+      --gold: #e9bc66;
+      --coral: #db846e;
+      --shadow: 0 10px 35px rgba(43, 55, 46, .07);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--wash); color: var(--ink); }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    .app { min-height: 100vh; display: grid; grid-template-columns: 246px minmax(0, 1fr); }
+    .sidebar { background: var(--paper); border-right: 1px solid var(--line); padding: 25px 17px; display: flex; flex-direction: column; gap: 26px; }
+    .brand { display: flex; align-items: center; gap: 11px; padding: 0 9px; }
+    .brand-mark { width: 37px; height: 37px; border-radius: 12px; display: grid; place-items: center; color: white; background: var(--green); font-size: 19px; }
+    .brand-name { font-family: Georgia, serif; font-weight: 700; letter-spacing: -.4px; font-size: 19px; }
+    .brand-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .shop-switch { margin: 0 4px; padding: 12px; border: 1px solid var(--line); border-radius: 12px; background: #fff; display: flex; align-items: center; gap: 10px; text-align: left; width: calc(100% - 8px); }
+    .shop-avatar { width: 35px; height: 35px; border-radius: 10px; background: #f5dfbc; color: #795d38; display: grid; place-items: center; font-weight: 700; }
+    .shop-meta { flex: 1; min-width: 0; }
+    .shop-meta strong { display: block; font-size: 12px; }
+    .shop-meta span { color: var(--muted); font-size: 11px; }
+    .nav-label { text-transform: uppercase; letter-spacing: 1.1px; color: #9aa099; font-size: 10px; font-weight: 700; padding: 0 12px 8px; }
+    .nav { display: grid; gap: 4px; }
+    .nav button { border: 0; border-radius: 9px; padding: 11px 12px; background: transparent; color: #68716a; display: flex; align-items: center; gap: 12px; text-align: left; font-size: 13px; }
+    .nav button.active { color: var(--green-dark); background: var(--green-soft); font-weight: 650; }
+    .nav-icon { width: 18px; text-align: center; font-size: 15px; }
+    .sidebar-bottom { margin-top: auto; }
+    .help-card { background: #f5f1e8; border-radius: 13px; padding: 15px; }
+    .help-card b { display: block; font-family: Georgia, serif; font-size: 15px; margin-bottom: 6px; }
+    .help-card p { margin: 0 0 11px; color: #70766e; line-height: 1.45; font-size: 11px; }
+    .text-button { padding: 0; border: 0; color: var(--green); font-weight: 700; background: transparent; font-size: 11px; }
+    main { min-width: 0; }
+    .topbar { min-height: 74px; padding: 15px 35px; border-bottom: 1px solid var(--line); background: rgba(255,254,250,.86); display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .crumb { color: var(--muted); font-size: 12px; }
+    .crumb strong { color: var(--ink); font-weight: 650; }
+    .top-right { display: flex; align-items: center; gap: 14px; }
+    .demo-pill { border: 1px solid #ecd8aa; border-radius: 999px; color: #8a6731; background: #fcf4df; font-size: 10px; letter-spacing: .5px; font-weight: 750; padding: 7px 10px; }
+    .icon-button { border: 1px solid var(--line); background: white; height: 35px; width: 35px; border-radius: 10px; color: #69726b; }
+    .content { max-width: 1350px; margin: auto; padding: 31px 35px 55px; }
+    .page { display: none; }
+    .page.visible { display: block; }
+    .page-title-row { display: flex; justify-content: space-between; align-items: end; gap: 18px; margin-bottom: 24px; }
+    .eyebrow { color: var(--green); font-size: 11px; letter-spacing: 1.5px; font-weight: 750; text-transform: uppercase; margin-bottom: 8px; }
+    h1 { margin: 0; font-family: Georgia, serif; font-size: clamp(26px, 3.2vw, 36px); font-weight: 500; letter-spacing: -1px; }
+    .subtitle { margin: 8px 0 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
+    .primary, .secondary { border-radius: 10px; padding: 11px 15px; font-size: 12px; font-weight: 700; transition: transform .15s ease, background .15s ease; }
+    .primary { border: 1px solid var(--green); color: white; background: var(--green); box-shadow: 0 5px 12px rgba(49,91,73,.12); }
+    .primary:hover { background: var(--green-dark); transform: translateY(-1px); }
+    .secondary { background: #fff; border: 1px solid var(--line); color: var(--ink); }
+    .secondary:hover { background: #f9faf6; }
+    .actions { display: flex; gap: 9px; flex-wrap: wrap; }
+    .welcome { overflow: hidden; position: relative; display: grid; grid-template-columns: minmax(0,1fr) 235px; gap: 20px; align-items: center; padding: 27px 30px; border-radius: 17px; background: #e8efe7; margin-bottom: 20px; }
+    .welcome:after { content: ""; position: absolute; width: 250px; height: 250px; border: 1px solid rgba(49,91,73,.12); border-radius: 50%; right: 125px; top: -145px; }
+    .welcome h2 { font-family: Georgia, serif; font-size: 25px; margin: 0 0 8px; font-weight: 500; letter-spacing: -.4px; }
+    .welcome p { color: #637166; font-size: 12px; line-height: 1.5; margin: 0 0 16px; max-width: 510px; }
+    .welcome-illustration { height: 137px; position: relative; display: grid; place-items: center; }
+    .poster { width: 102px; height: 124px; background: #fbf6e8; border: 8px solid white; border-bottom-width: 12px; box-shadow: 0 12px 23px rgba(57,77,60,.13); transform: rotate(5deg); position: relative; display: grid; place-items: center; }
+    .poster:before { content: ""; position: absolute; width: 56px; height: 68px; top: 18px; border-radius: 45% 45% 4px 4px; background: linear-gradient(180deg,#d87961 0 30%,#e5bb70 30% 61%,#71927c 61%); }
+    .poster:after { content: "✿"; position: absolute; color: #f7e6bc; font-size: 30px; top: 28px; left: 37px; }
+    .flower { position: absolute; font-size: 42px; color: #c66f58; left: 15px; bottom: 15px; transform: rotate(-12deg); }
+    .stats { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 13px; margin-bottom: 20px; }
+    .stat { background: white; border: 1px solid var(--line); border-radius: 13px; padding: 16px 17px; }
+    .stat-head { display: flex; align-items: center; justify-content: space-between; color: var(--muted); font-size: 11px; }
+    .stat-symbol { width: 27px; height: 27px; border-radius: 8px; display: grid; place-items: center; background: var(--green-soft); color: var(--green); }
+    .stat strong { display: block; font-family: Georgia,serif; font-size: 25px; font-weight: 500; margin-top: 11px; }
+    .stat small { display: block; color: #989e97; font-size: 10px; margin-top: 3px; }
+    .panel { background: white; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+    .panel-head { padding: 17px 19px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+    .panel-head h3 { margin: 0; font-family: Georgia,serif; font-size: 17px; font-weight: 500; }
+    .panel-head span { display: block; color: var(--muted); font-size: 11px; margin-top: 4px; }
+    .section-grid { display: grid; grid-template-columns: minmax(0,1.6fr) minmax(245px,.9fr); gap: 17px; }
+    .table-wrap { overflow-x: auto; }
+    table { border-collapse: collapse; width: 100%; min-width: 490px; }
+    th { padding: 10px 18px; border-top: 1px solid #f0f1ed; border-bottom: 1px solid #f0f1ed; text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: .8px; color: #9aa098; font-weight: 650; }
+    td { padding: 13px 18px; border-bottom: 1px solid #f3f4f0; font-size: 11px; color: #647068; }
+    tr:last-child td { border-bottom: 0; }
+    .item-cell { display: flex; align-items: center; gap: 10px; min-width: 190px; color: var(--ink); font-weight: 620; }
+    .thumb { flex: 0 0 auto; width: 35px; height: 40px; border-radius: 5px; background: linear-gradient(150deg,#f5d99a 0 35%,#759180 35% 60%,#d87f65 60%); border: 3px solid #fbf7eb; box-shadow: 0 1px 4px #ddd; }
+    .thumb.blue { background: linear-gradient(150deg,#bdd3d6 0 35%,#425d64 35% 60%,#db9273 60%); }
+    .thumb.lilac { background: linear-gradient(150deg,#d8cade 0 35%,#8c7f9c 35% 60%,#eed5a2 60%); }
+    .status { display: inline-flex; align-items: center; gap: 5px; border-radius: 20px; padding: 5px 8px; background: #f2f3f1; color: #707972; font-size: 10px; }
+    .status:before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: #9ca39c; }
+    .status.ready { background: #e9f2ea; color: #46704f; }
+    .status.ready:before { background: #68a276; }
+    .status.review { background: #fcf3df; color: #8d6a30; }
+    .status.review:before { background: #d9a94e; }
+    .pipeline { display: grid; gap: 0; padding: 0 19px 16px; }
+    .step { display: grid; grid-template-columns: 28px 1fr auto; gap: 10px; align-items: center; padding: 11px 0; border-bottom: 1px solid #f1f2ee; }
+    .step:last-child { border: 0; }
+    .step-number { height: 25px; width: 25px; border-radius: 50%; display: grid; place-items: center; background: var(--green-soft); color: var(--green); font-size: 10px; font-weight: 800; }
+    .step b { font-size: 11px; display: block; }
+    .step small { color: #9aa098; font-size: 10px; display: block; margin-top: 3px; }
+    .step-arrow { color: #929990; font-size: 17px; }
+    .sample-note { padding: 11px 18px; color: #898f88; font-size: 10px; border-top: 1px solid #f0f1ed; background: #fcfcfa; }
+    .tool-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 14px; }
+    .tool-card { padding: 19px; border: 1px solid var(--line); border-radius: 13px; background: white; min-height: 153px; }
+    .tool-card .card-icon { height: 35px; width: 35px; border-radius: 10px; display:grid; place-items:center; background: var(--green-soft); color: var(--green); font-size: 17px; margin-bottom: 15px; }
+    .tool-card h3 { font-family: Georgia,serif; font-size: 16px; font-weight: 500; margin: 0 0 7px; }
+    .tool-card p { color: var(--muted); font-size: 11px; line-height: 1.5; margin: 0; }
+    .design-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 13px; }
+    .design-card { background: white; border: 1px solid var(--line); border-radius: 12px; padding: 10px; }
+    .art { height: 150px; border-radius: 8px; background: linear-gradient(135deg,#ecdbb6,#f4e9d3 42%,#829684 43% 66%,#d9856d 67%); position: relative; overflow: hidden; display:grid; place-items:center; }
+    .art:before { content:""; width:73px; height:96px; background:#fbf7ed; border:6px solid white; box-shadow:0 4px 14px #7c756754; transform:rotate(3deg); }
+    .art:after { content:""; position:absolute; width:40px; height:57px; background:linear-gradient(#d18062 0 30%,#e6c07d 30% 62%,#71907a 62%); left:calc(50% - 20px); top:calc(50% - 36px); border-radius:50% 50% 2px 2px; }
+    .design-card h4 { margin: 10px 0 3px; font-size: 11px; }
+    .design-card p { color: var(--muted); font-size: 10px; margin: 0; }
+    .mockup-grid { display:grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap:13px; }
+    .mockup { min-height: 175px; border:1px solid var(--line); border-radius:12px; overflow:hidden; background:#f3eee5; display:grid; place-items:center; position:relative; }
+    .mockup.room { background:linear-gradient(180deg,#eee5d8 0 67%,#c8ac88 67%); }
+    .mockup.desk { background:linear-gradient(180deg,#e3e5db 0 69%,#bdc3b6 69%); }
+    .mock-frame { width:78px;height:103px;background:#fffdf5;border:7px solid white;box-shadow:0 9px 15px #27352b33;transform:rotate(-3deg);position:relative; }
+    .mock-frame:before { content:"";position:absolute;inset:8px;background:linear-gradient(#d98065 0 33%,#e8c57e 33% 64%,#738a76 64%);border-radius:50% 50% 2px 2px; }
+    .mockup.desk .mock-frame { transform:rotate(4deg) translateY(8px); width:68px;height:88px; }
+    .mock-label { position:absolute; bottom:9px; left:10px; background:#ffffffd9; padding:5px 7px; border-radius:6px; font-size:9px; color:#4c554d; }
+    .listing-tools { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:14px; }
+    .search { flex:1; min-width:170px; background:white; border:1px solid var(--line); border-radius:9px; padding:10px 12px; color:var(--ink); font-size:11px; }
+    .empty-card { border:1px dashed #d5dad2; border-radius:12px; padding:28px; text-align:center; color:var(--muted); background:#fffefa; }
+    .empty-card b { display:block; color:var(--ink); font-family:Georgia,serif; font-weight:500; font-size:17px; margin:0 0 6px; }
+    .settings-row { display:flex; justify-content:space-between; gap:15px; align-items:center; padding:17px 19px; border-top:1px solid #f0f1ed; }
+    .settings-row:first-of-type { border-top:0; }
+    .settings-row b { font-size:12px; }
+    .settings-row p { color:var(--muted); font-size:10px; margin:5px 0 0; line-height:1.4; }
+    .shop-sections { display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:8px; padding:0 17px 17px; }
+    .section-chip { min-width:0; display:flex; justify-content:space-between; align-items:center; gap:8px; border:1px solid var(--line); border-radius:9px; padding:10px 11px; background:#fff; }
+    .section-chip strong { font-size:10px; font-weight:650; }
+    .section-chip span { flex:0 0 auto; color:var(--muted); font-size:9px; }
+    dialog { width:min(480px,calc(100vw - 28px)); border:1px solid var(--line); border-radius:16px; padding:0; color:var(--ink); box-shadow:0 24px 70px #1d2a2040; }
+    dialog::backdrop { background:#1c282177; backdrop-filter:blur(2px); }
+    .dialog-head { padding:20px 22px 13px; border-bottom:1px solid var(--line); }
+    .dialog-head h2 { margin:0; font:500 22px Georgia,serif; }
+    .dialog-head p { margin:6px 0 0; color:var(--muted); font-size:11px; line-height:1.5; }
+    .dialog-body { display:grid; gap:13px; padding:17px 22px 20px; }
+    .field { display:grid; gap:6px; }
+    .field label { font-size:11px; font-weight:650; }
+    .field input { width:100%; border:1px solid var(--line); border-radius:8px; padding:10px; color:var(--ink); background:#fff; font-size:12px; }
+    .field small { color:var(--muted); font-size:10px; line-height:1.45; }
+    .dialog-actions { display:flex; justify-content:flex-end; gap:8px; padding-top:4px; }
+    .toast { position:fixed; right:22px; bottom:22px; padding:12px 16px; border-radius:10px; color:#fff; background:#263b2f; box-shadow:var(--shadow); font-size:12px; opacity:0; transform:translateY(8px); pointer-events:none; transition:.25s; z-index:10; }
+    .toast.show { opacity:1; transform:translateY(0); }
+    .hidden { display:none !important; }
+    @media (max-width:1000px) { .app { grid-template-columns:205px minmax(0,1fr); } .content { padding:25px 23px 45px; } .topbar { padding:14px 23px; } .stats { grid-template-columns:repeat(2,minmax(0,1fr)); } .design-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+    @media (max-width:700px) { .app { display:block; } .sidebar { position:sticky; top:0; z-index:5; padding:12px 13px; border-right:0; border-bottom:1px solid var(--line); gap:11px; } .brand { padding:0 2px; } .brand-mark { width:32px;height:32px; } .brand-name {font-size:16px;} .brand-sub {display:none;} .shop-switch,.nav-label,.sidebar-bottom {display:none;} .nav { display:flex; overflow-x:auto; gap:4px; scrollbar-width:none; } .nav button { flex:0 0 auto; padding:8px 10px; font-size:11px; } .nav-icon { width:auto; } .topbar { min-height:54px; padding:10px 16px; } .content { padding:22px 15px 35px; } .page-title-row { align-items:start; flex-direction:column; } .welcome { grid-template-columns:minmax(0,1fr) 95px; padding:21px 18px; } .welcome h2 {font-size:21px;} .welcome-illustration {transform:scale(.76);transform-origin:center right;} .stats { gap:9px; } .stat {padding:13px;} .section-grid { grid-template-columns:1fr; } .tool-grid { grid-template-columns:1fr; } .mockup-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .demo-pill {font-size:9px;padding:6px 8px;} }
+    @media (max-width:420px) { .nav button { font-size:10px; gap:6px; } .nav-icon {display:none;} .stats {grid-template-columns:repeat(2,minmax(0,1fr));} .design-grid {grid-template-columns:repeat(2,minmax(0,1fr));} .art {height:125px;} .mockup-grid {grid-template-columns:1fr 1fr;} }
+  
+    .preview-copy{white-space:pre-wrap;line-height:1.65;padding:15px;border:1px solid var(--line);border-radius:12px;background:#fbfcf8;margin:12px 0;font-size:13px}
+    .keyword-output{white-space:pre-wrap;overflow:auto;max-height:240px;background:#f7f8f4;padding:12px;border-radius:10px;font-size:12px}
+    .poster-card{display:grid;grid-template-columns:110px minmax(0,1fr);gap:13px;padding:13px;border:1px solid var(--line);border-radius:13px;background:#fffefa}
+    .poster-card img{width:110px;height:125px;object-fit:cover;border-radius:8px;background:#eee}
+    .poster-fields{display:grid;grid-template-columns:repeat(3,minmax(90px,1fr));gap:7px}
+    .poster-fields input{min-width:0;border:1px solid var(--line);border-radius:8px;padding:8px}
+    .poster-fields .wide{grid-column:1/-1}
+    .poster-card .card-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+    .mock-file{border:1px solid var(--line);border-radius:10px;padding:8px}
+    .mock-file img{width:100%;height:130px;object-fit:cover;border-radius:7px}
+    .draft-queue{display:grid;gap:8px;margin-top:15px}
+    .draft-row{display:flex;justify-content:space-between;gap:12px;border:1px solid var(--line);border-radius:10px;padding:10px}
+    .button-row{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}
+    @media(max-width:650px){.poster-card{grid-template-columns:72px 1fr}.poster-card img{width:72px;height:82px}.poster-fields{grid-template-columns:1fr 1fr}.poster-fields .wide{grid-column:1/-1}}
+
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand"><div class="brand-mark">✿</div><div><div class="brand-name">Shop Studio</div><div class="brand-sub">your Etsy workspace</div></div></div>
+      <button class="shop-switch" title="Shop connection will be set up later"><div class="shop-avatar">P</div><div class="shop-meta"><strong>Poster shop</strong><span>Etsy connection not set up</span></div><span>⌄</span></button>
+      <div>
+        <div class="nav-label">Workspace</div>
+        <nav class="nav" aria-label="Main navigation"><button class="active" data-view="overview"><span class="nav-icon">⌂</span>Overview</button><button data-view="designs"><span class="nav-icon">▧</span>My designs</button><button data-view="copy"><span class="nav-icon">✎</span>Copy & SEO</button><button data-view="mockups"><span class="nav-icon">▣</span>Mockups</button><button data-view="listings"><span class="nav-icon">☷</span>Drafts</button><button data-view="settings"><span class="nav-icon">↔</span>Alura</button></nav>
+      </div>
+      <div class="sidebar-bottom"><div class="help-card"><b>Small steps, steady progress.</b><p>Build each listing once, then keep your designs, images and shop details together.</p><button class="text-button" data-goto="designs">Start with a design →</button></div></div>
+    </aside>
+    <main>
+      <header class="topbar"><div class="crumb">Workspace&nbsp; / &nbsp;<strong id="crumb-name">Overview</strong></div><div class="top-right"><span class="demo-pill">PREVIEW · SAMPLE DATA</span><button class="icon-button" aria-label="Help" title="Help">?</button></div></header>
+      <div class="content">
+        <section class="page visible" id="overview">
+          <div class="page-title-row"><div><div class="eyebrow">Daveb77design poster workspace</div><h1>Make the next listing easier.</h1><p class="subtitle">Keep artwork, print sizes, mockups and listing drafts together across your poster ranges.</p></div><div class="actions"><button class="secondary" data-goto="mockups">Create mockups</button><button class="primary" id="add-design">＋ Add poster artwork</button></div></div>
+          <div class="welcome"><div><h2>From poster artwork to ready-to-review Etsy draft</h2><p>Organise travel, Asian art, food and drink, floral, car, sport and other poster collections. Choose print sizes and finishes, create product mockups, then review each Etsy draft before publishing.</p><button class="primary" data-goto="designs">See the simple workflow&nbsp; →</button></div><div class="welcome-illustration"><span class="flower">✿</span><div class="poster"></div></div></div>
+          <div class="stats">
+            <div class="stat"><div class="stat-head">Poster designs <span class="stat-symbol">▧</span></div><strong id="design-count">3</strong><small>Example items for this preview</small></div>
+            <div class="stat"><div class="stat-head">Product photos to review <span class="stat-symbol">▣</span></div><strong>6</strong><small>Choose your favourite mockups</small></div>
+            <div class="stat"><div class="stat-head">Poster listing drafts <span class="stat-symbol">☷</span></div><strong id="draft-count">2</strong><small>Nothing publishes automatically</small></div>
+            <div class="stat"><div class="stat-head">Ready for your review <span class="stat-symbol">✓</span></div><strong>1</strong><small>You approve every change</small></div>
+          </div>
+          <div class="section-grid">
+            <div class="panel"><div class="panel-head"><div><h3>Recent listing work</h3><span>Example data · not connected to your Etsy shop</span></div><button class="text-button" data-goto="listings">See all →</button></div><div class="table-wrap"><table><thead><tr><th>Product</th><th>Status</th><th>Updated</th></tr></thead><tbody>
+              <tr><td><div class="item-cell"><span class="thumb"></span>Madeira Atlantic coast poster</div></td><td><span class="status review">Needs a look</span></td><td>Today</td></tr>
+              <tr><td><div class="item-cell"><span class="thumb blue"></span>Tokyo pagoda skyline poster</div></td><td><span class="status ready">Ready to review</span></td><td>Yesterday</td></tr>
+              <tr><td><div class="item-cell"><span class="thumb lilac"></span>Chongqing city skyline poster</div></td><td><span class="status">Design added</span></td><td>Yesterday</td></tr>
+            </tbody></table></div><div class="sample-note">Example products are based on publicly visible listings. Your actual listing data will appear after a secure Etsy connection.</div></div>
+            <div class="panel"><div class="panel-head"><div><h3>Your simple workflow</h3><span>One step at a time</span></div></div><div class="pipeline">
+              <div class="step"><span class="step-number">1</span><div><b>Add poster artwork</b><small>Keep the original file safe</small></div><span class="step-arrow">›</span></div>
+              <div class="step"><span class="step-number">2</span><div><b>Choose sizes and mockups</b><small>Show how your poster looks</small></div><span class="step-arrow">›</span></div>
+              <div class="step"><span class="step-number">3</span><div><b>Prepare Etsy listing details</b><small>Title, price, tags and photos</small></div><span class="step-arrow">›</span></div>
+              <div class="step"><span class="step-number">4</span><div><b>Review before publishing</b><small>You stay in control</small></div><span class="step-arrow">✓</span></div>
+            </div></div>
+          </div>
+          <div class="panel" style="margin-top:16px"><div class="panel-head"><div><h3>Your Etsy sections</h3><span>Listing counts from the screenshot you shared</span></div></div><div class="shop-sections">
+            <div class="section-chip"><strong>Travel Posters</strong><span>242</span></div>
+            <div class="section-chip"><strong>Asian Art Prints</strong><span>87</span></div>
+            <div class="section-chip"><strong>Food &amp; Drink Prints</strong><span>52</span></div>
+            <div class="section-chip"><strong>William Morris Posters</strong><span>count not visible</span></div>
+            <div class="section-chip"><strong>Flower Prints</strong><span>19</span></div>
+            <div class="section-chip"><strong>Custom &amp; Seasonal Prints</strong><span>count not visible</span></div>
+            <div class="section-chip"><strong>Car Posters</strong><span>11</span></div>
+            <div class="section-chip"><strong>Sports Art Prints</strong><span>21</span></div>
+            <div class="section-chip"><strong>Zodiac Posters</strong><span>12</span></div>
+            <div class="section-chip"><strong>Art &amp; Poster Prints</strong><span>109</span></div>
+            <div class="section-chip"><strong>No Section</strong><span>0</span></div>
+          </div><div class="sample-note">Counts are a snapshot from your screenshot and may change as you edit your shop.</div></div>
+        </section>
+        <section class="page" id="designs">
+<div class="page-title-row"><div><div class="eyebrow">Your poster artwork</div><h1>My designs</h1><p class="subtitle">Add one poster or a whole batch. Each design gets its own editable SEO title, tags and opening copy.</p></div><button class="primary" id="add-design-2">＋ Add poster artwork</button></div>
+<div class="panel"><div class="panel-head"><div><h3>Poster batch</h3><span>PNG, JPG or WebP artwork · the app keeps it in this browser</span></div><button class="secondary" id="make-copy">Create SEO and copy</button></div><input id="file-input" class="hidden" type="file" accept="image/png,image/jpeg,image/webp" multiple><div class="design-grid" id="design-grid"></div><div id="empty-designs" class="sample-note">No poster artwork added yet.</div></div>
+</section>
+<section class="page" id="copy">
+<div class="page-title-row"><div><div class="eyebrow">Your listing voice</div><h1>Copy & Etsy SEO</h1><p class="subtitle">The first paragraph describes what is pictured. The second begins with the buyer keywords after “Perfect for”. Your existing shop description follows them.</p></div></div>
+<div class="panel"><div class="field"><label for="p1-template">Paragraph 1 · poster-specific artwork description</label><textarea id="p1-template" rows="4"></textarea><small>Starts with “Bring”. Available placeholders: {subject}, {place}, {style}, {mood}, {details}.</small></div>
+<div class="field"><label for="p2-template">Paragraph 2 · keywords after “Perfect for”</label><textarea id="p2-template" rows="4"></textarea><small>Starts with “Perfect for”. Available placeholders: {keywords}, {subject}, {place}, {room}, {audience}.</small></div>
+<div class="field"><label for="fixed-description">Your existing description · added after the two paragraphs</label><textarea id="fixed-description" rows="17"></textarea></div>
+<div class="field"><label for="preview-design">Preview this poster</label><select id="preview-design"></select></div><div class="preview-copy" id="description-preview"></div>
+<div class="panel-head" style="margin-top:22px"><div><h3>SEO ideas from Alura</h3><span>Research the poster subject, destination and style before choosing phrases.</span></div><button class="secondary" id="keyword-lookup">Look up keywords</button></div><pre class="keyword-output" id="keyword-output">Connect Alura and add poster details to research phrases.</pre></div>
+</section>
+        <section class="page" id="mockups">
+<div class="page-title-row"><div><div class="eyebrow">Poster listing photos</div><h1>Mockup studio</h1><p class="subtitle">Upload your 11 mockup backgrounds, place each poster, then save photo files for the Etsy listing.</p></div><button class="primary" id="add-mockups">＋ Add mockup images</button></div>
+<div class="panel"><div class="panel-head"><div><h3>Mockup library</h3><span>Flattened PNG or JPG exports · maximum 11 backgrounds</span></div></div><input id="mockup-files" class="hidden" type="file" accept="image/png,image/jpeg" multiple><div id="mockup-grid" class="mockup-grid"></div><div id="empty-mockups" class="sample-note">Your 11 mockup files have not been uploaded yet. PSD templates need to be exported as PNG or JPG.</div></div>
+<div class="panel"><div class="panel-head"><div><h3>Set the print area</h3><span>Adjust the poster position separately for the selected scene.</span></div></div><div class="field"><label>Mockup scene</label><select id="placement-mock"></select></div><div class="field"><label>Poster artwork</label><select id="placement-art"></select></div><div class="field"><label>Left edge <span id="x-out"></span></label><input id="px" type="range" min="0" max="80" value="25"></div><div class="field"><label>Top edge <span id="y-out"></span></label><input id="py" type="range" min="0" max="80" value="15"></div><div class="field"><label>Print width <span id="w-out"></span></label><input id="pw" type="range" min="10" max="90" value="50"></div><div class="field"><label>Print height <span id="h-out"></span></label><input id="ph" type="range" min="10" max="90" value="70"></div><div id="mock-preview" class="preview-copy">Add a poster and mockup image to preview.</div><div class="button-row"><button class="primary" id="render-one">Create mockups for this poster</button><button class="secondary" id="render-all">Create mockups for all posters</button><button class="secondary" id="download-mockups">Download generated images</button></div></div>
+</section>
+        <section class="page" id="listings">
+<div class="page-title-row"><div><div class="eyebrow">Drafts for your Etsy shop</div><h1>Poster listing drafts</h1><p class="subtitle">Select your Alura-connected shop and a suitable physical listing to copy its variations, price and shipping.</p></div><button class="primary" id="send-drafts">Create Etsy drafts</button></div>
+<div class="panel"><div class="field"><label>Connected Etsy shop</label><select id="etsy-shop"><option value="">Connect Alura first</option></select></div><button class="secondary" id="load-listings">Load existing listings</button><div class="field"><label>Existing listing to copy settings from</label><select id="source-listing"><option value="">Select a shop first</option></select></div><div class="sample-note">New listings are created as drafts and are not published. Check each draft in Etsy before publishing.</div><div id="draft-queue" class="draft-queue"></div><div id="queue-empty" class="sample-note">Add artwork to see your draft queue.</div></div>
+</section>
+        <section class="page" id="marketing">
+          <div class="page-title-row"><div><div class="eyebrow">Share your work</div><h1>Marketing planner</h1><p class="subtitle">Plan a few posts around each new product. Social publishing can be added later.</p></div><button class="primary" data-toast="Your post idea has been saved in this preview.">＋ Add a post idea</button></div>
+          <div class="tool-grid"><article class="tool-card"><div class="card-icon">✦</div><h3>Listing launch</h3><p>Plan a launch post with the new artwork, the product link and a short caption.</p></article><article class="tool-card"><div class="card-icon">▧</div><h3>Make a post image</h3><p>Reuse a product mockup in a social-friendly size when you are ready.</p></article><article class="tool-card"><div class="card-icon">◷</div><h3>Schedule later</h3><p>Connect a supported scheduler in a later phase. No social account is linked in this preview.</p></article></div>
+          <div class="panel" style="margin-top:16px"><div class="panel-head"><div><h3>Coming together</h3><span>A place for ideas, not another thing you have to keep up with</span></div></div><div class="empty-card" style="margin:0 17px 17px"><b>Start with one product you already love</b>Use its photos and story to plan one small post.</div></div>
+        </section>
+        <section class="page" id="settings">
+<div class="page-title-row"><div><div class="eyebrow">Connections</div><h1>Alura & GitHub setup</h1><p class="subtitle">Connect your Etsy shop in Alura, then keep its API key on the private app server.</p></div></div>
+<div class="panel"><h3>Alura connection</h3><p id="alura-status">Alura is not connected to the app yet.</p><ol><li>Alura Settings → Etsy shops: connect your Etsy shop through Etsy’s approval page.</li><li>Alura Settings → API keys: create a key with shop read, listings write and keyword research access.</li><li>Set the key on the app server as ALURA_API_KEY. Never paste it into this web page or commit it to GitHub.</li><li>For generated mockup photos to reach Etsy through Alura, the hosted app needs a public HTTPS image address.</li></ol><div class="button-row"><button class="primary" id="check-alura">Check Alura connection</button><a class="secondary" href="https://platform.alura.io/settings/workspace/etsy-shops" target="_blank" rel="noreferrer">Open Alura shop settings</a><a class="secondary" href="https://platform.alura.io/settings/workspace/api-keys" target="_blank" rel="noreferrer">Open Alura API keys</a></div></div>
+<div class="panel"><h3>GitHub repository</h3><p>The repository is visible, but the connected GitHub integration rejected the file write because it does not have permission to change repository contents. Enable Contents read and write access for this repository, then the app source can be added.</p><p><a href="README.md" target="_blank">Open the setup guide</a></p></div>
+</section>
+      </div>
+    </main>
+  </div>
+  <dialog id="listing-dialog">
+    <form id="listing-form">
+      <div class="dialog-head"><h2>Start a poster listing</h2><p>This creates a local draft in the preview. It will not publish or change anything in Etsy.</p></div>
+      <div class="dialog-body">
+        <div class="field"><label for="poster-title">Poster name</label><input id="poster-title" name="title" required placeholder="e.g. Tokyo Japan pagoda skyline poster"></div>
+        <div class="field"><label for="poster-section">Shop section</label><select id="poster-section" name="section" required><option>Travel Posters</option><option>Asian Art Prints</option><option>Food &amp; Drink Prints</option><option>William Morris Posters</option><option>Flower Prints</option><option>Custom &amp; Seasonal Prints</option><option>Car Posters</option><option>Sports Art Prints</option><option>Zodiac Posters</option><option>Art &amp; Poster Prints</option></select></div>
+        <div class="field"><label for="poster-sizes">Sizes you sell</label><input id="poster-sizes" name="sizes" value="A0–A5, 11×14, 16×20, 18×24, 20×30, 24×36, 30×40" required><small>These size examples appear in your public listings. Edit them for each poster.</small></div>
+        <div class="field"><label for="poster-price">Starting price (£)</label><input id="poster-price" name="price" type="number" min="0" step="0.01" value="18.00" required><small>You can set different prices for each size when we build the connected version.</small></div>
+        <div class="field"><label for="poster-finish">Paper or finish (optional)</label><input id="poster-finish" name="finish" value="Matte, satin (semi-gloss), glossy"><small>Your public listings mention 240+ gsm art paper with these finish choices.</small></div>
+        <div class="dialog-actions"><button class="secondary" type="button" id="cancel-listing">Cancel</button><button class="primary" type="submit">Save draft</button></div>
+      </div>
+   <script>const navButtons=[...document.querySelectorAll("[data-view]")],pages=[...document.querySelectorAll(".page")],crumb=document.getElementById("crumb-name");
+const labels={overview:"Overview",designs:"My designs",copy:"Copy & SEO",mockups:"Mockups",listings:"Drafts",marketing:"Marketing",settings:"Connections"};
+function showPage(name){pages.forEach(p=>p.classList.toggle("visible",p.id===name));navButtons.forEach(b=>b.classList.toggle("active",b.dataset.view===name));crumb.textContent=labels[name]||"Overview";window.scrollTo({top:0,behavior:"smooth"});if(name==="listings")drawQueue();if(name==="mockups")drawMocks()}
+navButtons.forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.view)));document.querySelectorAll("[data-goto]").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.goto)));document.querySelector(".icon-button")?.addEventListener("click",()=>showPage("settings"));
+let timer;function toast(m){const b=document.getElementById("toast");b.textContent=m;b.classList.add("show");clearTimeout(timer);timer=setTimeout(()=>b.classList.remove("show"),2800)}
+const key="posterStudioData",dbName="poster-studio-v1";let state,dbp;
+function openDB(){if(dbp)return dbp;dbp=new Promise((ok,no)=>{const r=indexedDB.open(dbName,1);r.onupgradeneeded=()=>{for(const n of ["assets","renders"])if(!r.result.objectStoreNames.contains(n))r.result.createObjectStore(n,{keyPath:"id"})};r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)});return dbp}
+async function store(n,o){const d=await openDB();return new Promise((ok,no)=>{const t=d.transaction(n,"readwrite");t.objectStore(n).put(o);t.oncomplete=ok;t.onerror=()=>no(t.error)})}
+async function read(n,id){const d=await openDB();return new Promise((ok,no)=>{const r=d.transaction(n).objectStore(n).get(id);r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)})}
+async function all(n){const d=await openDB();return new Promise((ok,no)=>{const r=d.transaction(n).objectStore(n).getAll();r.onsuccess=()=>ok(r.result||[]);r.onerror=()=>no(r.error)})}
+async function remove(n,id){const d=await openDB();return new Promise(ok=>{const t=d.transaction(n,"readwrite");t.objectStore(n).delete(id);t.oncomplete=ok})}
+function save(){localStorage.setItem(key,JSON.stringify(state))}
+function readFile(f){return new Promise((ok,no)=>{const r=new FileReader();r.onload=()=>ok(r.result);r.onerror=()=>no(r.error);r.readAsDataURL(f)})}
+function newId(){return crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2)}
+function esc(s){return String(s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function base(s){return s.replace(/\.[^.]+$/,"").replace(/[_-]+/g," ").replace(/\s+/g," ").trim()}
+const defaultCopy="Available Framed & Unframed\n\nPlease Note:\nColors may vary slightly from what you see on your monitor.\n\nAt Checkout Please Message What Finish You Want: Matte, Satin (Semi Gloss) or Gloss\n\nSizes available. Looking for a different size? Custom sizes are available — use the “Request Custom Order” button or message me.\n\nA0: 84.1 x 118.9 cm (33.1 x 46.8 in)\nA1: 59.4 x 84.1 cm (23.4 x 33.1 in)\nA2: 42 x 59.4 cm (16.5 x 23.4 in)\nA3: 29.7 x 42 cm (11.7 x 16.5 in)\nA4: 21 x 29.7 cm (8.3 x 11.7 in)\nA5: 14.8 x 21 cm (5.8 x 8.3 in)\n11x14 in\n8x10 in\n16x20 in\n18x24 in\n20x30 in\n24x32 in\n24x36 in\n30x40 in\n\nShipping:\nWe offer rolled in a protected tube shipping, with postage tailored to your location. Shipping is free for US, UK & most EU customers.\n\nFast global delivery powered by our network of print hubs across the UK, EU, USA, Canada, and Australia, ensuring quick shipping with no import fees.\nReduced carbon footprint thanks to regional production, meaning your order is printed as close to you as possible.\n\nPremium 240+ gsm paper for all posters, ensuring a professional, gallery-grade feel and museum-quality look. Choose glossy, satin (semi-gloss), or matte finishes to suit your preference.\n\nI concept the ideas and use generative AI tools to assist in creating the final high-detail artwork.";
+const p1Default="Bring {mood} into your space with this {style} {subject} poster. {details}";
+const p2Default="Perfect for {keywords}, this wall art adds {mood} to your decor. It makes a thoughtful gift for {audience}.";
+try{state=JSON.parse(localStorage.getItem(key)||"{}")}catch{state={}}state.arts=state.arts||[];state.mocks=state.mocks||[];state.placements=state.placements||{};state.shopId=state.shopId||"";state.sourceId=state.sourceId||"";state.p1=state.p1||p1Default;state.p2=state.p2||p2Default;state.fixed=state.fixed||defaultCopy;
+document.querySelectorAll(".nav button").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.view)));
+document.getElementById("add-design").onclick=()=>{showPage("designs");document.getElementById("file-input").click()};
+document.getElementById("add-design-2").onclick=()=>document.getElementById("file-input").click();
+document.getElementById("file-input").addEventListener("change",async e=>{for(const f of [...e.target.files]){if(!f.type.startsWith("image/"))continue;const aid=newId();await store("assets",{id:aid,data:await readFile(f),name:f.name});state.arts.push({id:aid,name:f.name,subject:base(f.name),place:"",style:"",mood:"",details:"",keywords:"",room:"bedrooms, reading corners, cosy living spaces",audience:"art lovers and thoughtful gift buyers",title:"",tags:[],status:"Not prepared"})}save();drawArts();e.target.value=""});
+document.getElementById("make-copy").onclick=()=>{state.arts.forEach(makeSeo);save();drawArts();toast("Titles, tags and opening paragraphs prepared. Please review them.")};
+function seoTitle(d){const lead=[d.place,d.subject].filter(Boolean).join(" "),tail=[d.style,"Art Print","Wall Art Poster"].filter(Boolean),all=[lead,...tail].filter(Boolean).join(" | "),words=all.split(/\s+/),seen=new Set();return words.filter(w=>{const k=w.toLowerCase();if(seen.has(k))return false;seen.add(k);return true}).join(" ").slice(0,140).trim()}
+function tagList(d){const raw=[...(d.keywords||"").split(/[;,\n]+/),d.place?d.place+" poster":"",d.place?d.place+" wall art":"",d.subject?d.subject+" print":"",d.style?d.style+" poster":"",d.style?d.style+" wall art":"","poster wall art","gallery wall decor","art print gift","home decor print","unique art gift"],out=[],seen=new Set();for(let x of raw){x=x.replace(/[^A-Za-z0-9À-ÿ '-]/g,"").replace(/^[- ']+/,"").replace(/\s+/g," ").trim();const k=x.toLowerCase();if(x&&x.length<=20&&!seen.has(k)){seen.add(k);out.push(x)}if(out.length===13)break}return out}
+function makeSeo(d){d.title=seoTitle(d);d.tags=tagList(d);d.status="Ready to review"}
+function values(d){return {subject:d.subject||"this poster",place:d.place||"your chosen destination",style:d.style||"illustrated",mood:d.mood||"character",details:d.details||"A carefully composed design brings color and atmosphere to your walls.",keywords:d.keywords||d.tags.slice(0,4).join(", ")||"poster art and wall decor",room:d.room||"living rooms and bedrooms",audience:d.audience||"art lovers and thoughtful gift buyers"}}
+function fill(t,d){const v=values(d);return t.replace(/\{([a-z]+)\}/gi,(m,k)=>v[k.toLowerCase()]||m)}
+function description(d){let a=fill(state.p1,d),b=fill(state.p2,d);if(!/^bring\b/i.test(a.trim()))a="Bring "+a;if(!/^perfect for\b/i.test(b.trim()))b="Perfect for "+b;return [a,b,state.fixed].filter(Boolean).join("\n\n")}
+function drawArts(){const grid=document.getElementById("design-grid");grid.innerHTML="";document.getElementById("empty-designs").classList.toggle("hidden",state.arts.length>0);for(const d of state.arts){const card=document.createElement("article");card.className="poster-card";card.innerHTML='<img alt=""><div><div class="card-head"><div><b>'+esc(d.name)+'</b><div class="caption">'+esc(d.status)+'</div></div><button class="secondary remove-art" data-id="'+d.id+'">Remove</button></div><div class="poster-fields">'+field(d,"subject","Poster subject")+field(d,"place","Place / destination")+field(d,"style","Art style")+field(d,"mood","Mood")+field(d,"room","Room keywords")+field(d,"audience","Gift audience")+field(d,"details","What is pictured? Colors, objects, visual style","wide")+field(d,"keywords","Buyer search phrases, comma separated","wide")+field(d,"title","SEO title, up to 140 characters","wide")+field(d,"tags","Tags (13 maximum, 20 characters each)","wide")+'</div><div class="button-row"><button class="secondary make-one" data-id="'+d.id+'">Refresh title & tags</button><button class="secondary show-copy" data-id="'+d.id+'">Preview description</button></div></div>';grid.appendChild(card);read("assets",d.id).then(a=>{if(a)card.querySelector("img").src=a.data})}document.getElementById("design-count").textContent=state.arts.length;document.getElementById("draft-count").textContent=state.arts.filter(d=>d.status.includes("Draft created")).length;drawSelectors()}
+function field(d,k,ph,cls=""){const val=k==="tags"?(d.tags||[]).join(", "):d[k]||"";return '<input class="'+cls+'" data-id="'+d.id+'" data-field="'+k+'" placeholder="'+esc(ph)+'" value="'+esc(val)+'">'}
+document.getElementById("design-grid").addEventListener("input",e=>{const d=state.arts.find(x=>x.id===e.target.dataset.id),k=e.target.dataset.field;if(!d||!k)return;if(k==="tags")d.tags=e.target.value.split(",").map(x=>x.trim()).filter(Boolean);else d[k]=e.target.value;save();drawCopyPreview()});
+document.getElementById("design-grid").addEventListener("click",async e=>{const b=e.target.closest("button"),d=state.arts.find(x=>x.id===b?.dataset.id);if(!b||!d)return;if(b.classList.contains("make-one")){makeSeo(d);save();drawArts()}if(b.classList.contains("show-copy")){drawSelectors();document.getElementById("preview-design").value=d.id;drawCopyPreview();showPage("copy")}if(b.classList.contains("remove-art")){state.arts=state.arts.filter(x=>x.id!==d.id);await remove("assets",d.id);save();drawArts()}});
+document.getElementById("p1-template").value=state.p1;document.getElementById("p2-template").value=state.p2;document.getElementById("fixed-description").value=state.fixed;
+document.getElementById("p1-template").oninput=e=>{state.p1=e.target.value;save();drawCopyPreview()};document.getElementById("p2-template").oninput=e=>{state.p2=e.target.value;save();drawCopyPreview()};document.getElementById("fixed-description").oninput=e=>{state.fixed=e.target.value;save();drawCopyPreview()};
+function drawSelectors(){const opts=state.arts.map(d=>'<option value="'+d.id+'">'+esc(d.subject||d.name)+'</option>').join("");document.getElementById("preview-design").innerHTML=opts||'<option value="">Add artwork</option>';document.getElementById("placement-art").innerHTML=opts||'<option value="">Add artwork</option>';drawCopyPreview()}
+function drawCopyPreview(){const d=state.arts.find(x=>x.id===document.getElementById("preview-design").value)||state.arts[0];document.getElementById("description-preview").textContent=d?description(d):"Add artwork to preview your description."}
+document.getElementById("preview-design").onchange=drawCopyPreview;
+document.getElementById("keyword-lookup").onclick=async()=>{const d=state.arts.find(x=>x.id===document.getElementById("preview-design").value)||state.arts[0];if(!d){toast("Add a poster first.");return}try{const r=await api("/api/keywords",{method:"POST",body:JSON.stringify({q:[d.place,d.subject,d.style].filter(Boolean).join(" ")})});document.getElementById("keyword-output").textContent=JSON.stringify(r.data||r,null,2)}catch(err){document.getElementById("keyword-output").textContent=err.message;toast(err.message)}};
+document.getElementById("add-mockups").onclick=()=>document.getElementById("mockup-files").click();
+document.getElementById("mockup-files").onchange=async e=>{for(const f of [...e.target.files]){if(state.mocks.length>=11){toast("Maximum 11 mockups.");break}if(!["image/png","image/jpeg"].includes(f.type)){toast("Export PSD mockups as PNG or JPG first.");continue}const mid=newId();await store("assets",{id:mid,data:await readFile(f),name:f.name});state.mocks.push({id:mid,name:f.name});state.placements[mid]={x:25,y:15,w:50,h:70,opacity:96}}save();drawMocks();e.target.value=""};
+function drawMocks(){const g=document.getElementById("mockup-grid");g.innerHTML="";document.getElementById("empty-mockups").classList.toggle("hidden",state.mocks.length>0);document.getElementById("mock-count").textContent=state.mocks.length+" / 11";document.getElementById("placement-mock").innerHTML=state.mocks.map(m=>'<option value="'+m.id+'">'+esc(m.name)+'</option>').join("")||'<option value="">Add mockups</option>';for(const m of state.mocks){const c=document.createElement("div");c.className="mock-file";c.innerHTML='<img alt=""><div>'+esc(m.name)+'</div><button class="secondary delete-mock" data-id="'+m.id+'">Remove</button>';g.appendChild(c);read("assets",m.id).then(a=>{if(a)c.querySelector("img").src=a.data})}drawSelectors();placementValues();previewMock()}
+document.getElementById("mockup-grid").onclick=async e=>{const b=e.target.closest(".delete-mock");if(!b)return;state.mocks=state.mocks.filter(m=>m.id!==b.dataset.id);await remove("assets",b.dataset.id);save();drawMocks()};
+function placementValues(){const id=document.getElementById("placement-mock").value,p=state.placements[id]||{x:25,y:15,w:50,h:70};for(const [k,elid] of [["x","px"],["y","py"],["w","pw"],["h","ph"]]){document.getElementById(elid).value=p[k];document.getElementById(k+"-out").textContent=p[k]+"%"}}
+document.getElementById("placement-mock").onchange=()=>{placementValues();previewMock()};document.getElementById("placement-art").onchange=previewMock;
+for(const [key,id] of [["x","px"],["y","py"],["w","pw"],["h","ph"]])document.getElementById(id).oninput=()=>{const m=document.getElementById("placement-mock").value;if(!m)return;state.placements[m]=state.placements[m]||{x:25,y:15,w:50,h:70};state.placements[m][key]=Number(document.getElementById(id).value);save();placementValues();previewMock()};
+async function image(src){return new Promise((ok,no)=>{const i=new Image();i.onload=()=>ok(i);i.onerror=no;i.src=src})}
+async function previewMock(){const m=state.mocks.find(x=>x.id===document.getElementById("placement-mock").value),d=state.arts.find(x=>x.id===document.getElementById("placement-art").value)||state.arts[0],box=document.getElementById("mock-preview");if(!m||!d){box.textContent="Add a poster and mockup image to preview.";return}const [a,b]=await Promise.all([read("assets",m.id),read("assets",d.id)]);const [bg,art]=await Promise.all([image(a.data),image(b.data)]),c=document.createElement("canvas"),scale=Math.min(700/bg.width,500/bg.height,1);c.width=bg.width*scale;c.height=bg.height*scale;const x=c.getContext("2d"),p=state.placements[m.id]||{x:25,y:15,w:50,h:70,opacity:96};x.drawImage(bg,0,0,c.width,c.height);x.globalAlpha=p.opacity/100;x.drawImage(art,c.width*p.x/100,c.height*p.y/100,c.width*p.w/100,c.height*p.h/100);box.innerHTML="";c.style.maxWidth="100%";c.style.maxHeight="420px";box.append(c)}
+async function makeRender(d,m){const [a,b]=await Promise.all([read("assets",m.id),read("assets",d.id)]),[bg,art]=await Promise.all([image(a.data),image(b.data)]),c=document.createElement("canvas"),scale=Math.min(2800/bg.width,2800/bg.height,1);c.width=Math.round(bg.width*scale);c.height=Math.round(bg.height*scale);const x=c.getContext("2d"),p=state.placements[m.id]||{x:25,y:15,w:50,h:70,opacity:96};x.drawImage(bg,0,0,c.width,c.height);x.globalAlpha=p.opacity/100;x.drawImage(art,c.width*p.x/100,c.height*p.y/100,c.width*p.w/100,c.height*p.h/100);const blob=await new Promise(ok=>c.toBlob(ok,"image/jpeg",.92));const data=await new Promise(ok=>{const r=new FileReader();r.onload=()=>ok(r.result);r.readAsDataURL(blob)});await store("renders",{id:d.id+"__"+m.id,designId:d.id,name:base(d.subject)+" - "+base(m.name)+".jpg",data})}
+async function render(list){if(!state.mocks.length||!list.length){toast("Add posters and mockups first.");return}for(const d of list){d.status="Creating mockups";drawArts();for(const m of state.mocks){try{await makeRender(d,m)}catch(err){console.error(err)}}d.status="Ready to review";save();drawArts()}toast("Mockup photos created. Review each before sending.")}
+document.getElementById("render-one").onclick=()=>{const d=state.arts.find(x=>x.id===document.getElementById("placement-art").value)||state.arts[0];if(d)render([d])};document.getElementById("render-all").onclick=()=>render(state.arts);
+document.getElementById("download-mockups").onclick=async()=>{const out=await all("renders");if(!out.length){toast("Create mockups first.");return}for(const o of out){const a=document.createElement("a");a.href=o.data;a.download=o.name;a.click();await new Promise(r=>setTimeout(r,140))}toast(out.length+" image downloads started.")};
+async function api(url,options={}){const r=await fetch(url,{...options,credentials:"same-origin",headers:{"Content-Type":"application/json",...(options.headers||{})}});const data=await r.json().catch(()=>({}));if(r.status===401&&data.login_required){const password=prompt("Enter the private app password set on the server:");if(!password)throw Error("App password required.");const login=await fetch("/api/login",{method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:JSON.stringify({password})});if(!login.ok)throw Error("App password did not work.");return api(url,options)}if(!r.ok)throw Error(data.error||data.message||("Request failed: "+r.status));return data}
+async function checkAlura(){try{const r=await api("/api/status");if(r.connected){document.getElementById("alura-status").textContent="Alura connected. "+r.shops.length+" Etsy shop(s) found.";document.getElementById("etsy-shop").innerHTML=r.shops.map(s=>'<option value="'+esc(s.id)+'">'+esc(s.name||"Etsy shop "+s.id)+'</option>').join("");document.getElementById("alura-status").className="notice green";document.getElementById("alura-status").style.color="";document.getElementById("crumb-name").dataset.connected="yes";}else{document.getElementById("alura-status").textContent="Alura API key is not configured on the app server yet.";document.getElementById("crumb-name").dataset.connected="no"}}catch(err){document.getElementById("alura-status").textContent=err.message;toast(err.message)}}
+async function loadListings(){state.shopId=document.getElementById("etsy-shop").value;try{const r=await api("/api/listings?shopId="+encodeURIComponent(state.shopId));state.listings=Array.isArray(r.data)?r.data:(r.results||[]);document.getElementById("source-listing").innerHTML=state.listings.map(x=>'<option value="'+esc(x.id||x.listing_id)+'">'+esc(x.title||"Listing "+(x.id||x.listing_id))+'</option>').join("");save()}catch(e){toast(e.message)}}
+function drawQueue(){const q=document.getElementById("draft-queue");q.innerHTML="";document.getElementById("queue-empty").classList.toggle("hidden",state.arts.length>0);for(const d of state.arts){const row=document.createElement("div");row.className="draft-row";row.innerHTML='<span><b>'+esc(d.title||d.subject||d.name)+'</b><br><small>'+esc((d.tags||[]).length+" tags · mockups "+state.mocks.length)+'</small></span><span>'+esc(d.status)+'</span>';q.append(row)}}
+document.getElementById("etsy-shop").onchange=loadListings;document.getElementById("load-listings").onclick=loadListings;document.getElementById("check-alura").onclick=checkAlura;document.getElementById("new-listing")?.addEventListener("click",()=>showPage("designs"));
+document.getElementById("send-drafts").onclick=async()=>{if(!state.arts.length||!state.shopId||!document.getElementById("source-listing").value){toast("Choose a shop and source listing first.");return}if(!state.mocks.length){toast("Add your mockup files and create the photos first.");return}if(!confirm("Create "+state.arts.length+" Etsy drafts? They will stay unpublished."))return;state.sourceId=document.getElementById("source-listing").value;for(let d of state.arts){try{const outs=(await all("renders")).filter(x=>x.designId===d.id).slice(0,20);if(!outs.length)throw Error("Create mockups first.");const imageUrls=[];for(const o of outs){const m=await api("/api/media",{method:"POST",body:JSON.stringify({name:o.name,data:o.data})});imageUrls.push(m.url)}const result=await api("/api/create-draft",{method:"POST",body:JSON.stringify({shopId:state.shopId,sourceListingId:state.sourceId,title:d.title,description:description(d),tags:d.tags,imageUrls})});d.status="Draft created · "+result.id}catch(err){d.status="Needs attention · "+err.message}save();drawQueue()}toast("Draft batch finished. Check each result.")};
+
+document.getElementById("listing-rows").innerHTML="";
+drawArts();drawMocks();document.getElementById("design-count").textContent=state.arts.length;document.getElementById("mock-count").textContent=state.mocks.length+" / 11";document.getElementById("p1-template").value=state.p1;document.getElementById("p2-template").value=state.p2;document.getElementById("fixed-description").value=state.fixed;
+document.getElementById("p1-template").oninput=e=>{state.p1=e.target.value;save();drawCopyPreview()};document.getElementById("p2-template").oninput=e=>{state.p2=e.target.value;save();drawCopyPreview()};document.getElementById("fixed-description").oninput=e=>{state.fixed=e.target.value;save();drawCopyPreview()};
+drawQueue();checkAlura();</script>e.target.value;save();drawCopyPreview()};
+drawQueue();checkAlura();</script>
+</body>
+</html>
