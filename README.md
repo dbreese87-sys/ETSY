@@ -1,31 +1,34 @@
 # Poster Studio
 
-A local batch workspace for your physical Etsy posters.
+A batch workspace for preparing physical Etsy poster listings.
 
 ## What it does
 
 - Adds multiple poster artworks to one batch.
-- Prepares an editable Etsy title and up to 13 tags per poster. Each tag is limited to 20 characters.
-- Creates two editable description paragraphs: “Bring…” describes the artwork; “Perfect for…” begins with the buyer keywords. Your standard shop copy is appended after them.
-- Stores up to 11 flattened PNG/JPG mockup backgrounds and renders photos in this browser.
+- Prepares editable Etsy titles and up to 13 tags per poster, each no longer than 20 characters.
+- Creates two editable description paragraphs: “Bring…” describes the artwork; “Perfect for…” begins with buyer keywords. Your standard shop copy follows them.
+- Stores up to 11 flattened PNG/JPG mockup backgrounds and renders listing photos in the browser.
 - Connects to Etsy shops and listings through Alura.
-- Copies an existing physical Etsy listing, updates its title, description and tags, attaches the generated photos, and leaves the result as an Etsy draft.
+- Copies a source listing, updates its title, description and tags, attaches generated photos, and leaves the copy as an Etsy draft.
 
-## Set up
+## Run on your Windows computer
 
-1. Install Node.js 20 or newer on Windows.
-2. In Alura, open Settings → Etsy shops and connect your Etsy shop through Etsy’s approval page.
-3. In Alura, open Settings → API keys and create a key with workspace read, listings write and research read access.
-4. Copy .env.example to .env and add the key to ALURA_API_KEY. The key is read only by the server. Do not paste it in chat or commit .env to GitHub.
-5. Double-click Start Poster Studio.bat.
-6. Upload your artwork, enter poster details and search phrases, edit the suggested copy, then add your mockup files.
+1. Install Node.js 24 or newer.
+2. Double-click `Start Poster Studio.bat`.
+3. Upload artwork, add its details and search phrases, edit the suggested copy, then add mockups.
 
-The app accepts PNG/JPG mockup backgrounds. If your preferred templates are PSD files, export the scenes to PNG or JPG first. The preview screenshots are examples; the 11 actual mockup files still need to be uploaded.
+PSD mockup templates must be exported as PNG or JPG. The 11 mockup files still need to be added.
 
-## Etsy photo hosting
+## Put it online
 
-Alura needs to fetch the finished photos from a public HTTPS address. A local computer address such as 127.0.0.1 is private, so draft photo upload needs the app hosted on an HTTPS server with persistent file storage. Set PUBLIC_BASE_URL to that server address. For a hosted server, set HOST to 0.0.0.0 behind HTTPS and configure a strong APP_PASSWORD and APP_SESSION_SECRET.
+Follow [SERVER_SETUP.md](SERVER_SETUP.md) to connect this repository to Render. The included `render.yaml` configures HTTPS, persistent photo storage, and private Alura and app-password settings. Live deployment requires a Render account and private Alura credentials.
 
-## GitHub
+The current published estimate is about US$7/month for the Starter server plus US$0.25/month for its 1 GB disk, before tax or extra bandwidth. See [Render pricing](https://render.com/pricing). A free Render web service cannot keep uploaded files on a persistent disk; see [free service limits](https://render.com/docs/free).
 
-Keep .env, media/, artwork and mockup files out of GitHub. GitHub stores the source; it does not keep the Alura key private if you place the key in a committed file. The GitHub integration currently needs repository Contents read and write access before the app source can be committed.
+## Connect Alura
+
+Connect your Etsy shop in Alura, then create an API key with workspace read, listings write and research read access. Enter the key privately in Render as `ALURA_API_KEY` or in your local `.env` file. Never paste it into chat or commit it to GitHub.
+
+## Keep private data private
+
+Do not commit `.env`, artwork or mockup files. Enter the Alura key and app password only in Render's private environment settings. The hosted server will not start without them.
